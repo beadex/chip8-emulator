@@ -1,0 +1,32 @@
+# CMake generated files
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+Makefile
+CTestTestfile.cmake
+Testing/
+install_manifest.txt
+compile_commands.json
+
+# Build directories
+build/
+out/
+bin/
+*/cmake-build-*/ # For IDEs like CLion
+
+# Visual Studio specific
+.vs/
+*.vcxproj.user
+*.suo
+*.sln.docstates
+
+# Other common temporary files
+*.o
+*.obj
+*.exe
+*.dll
+*.so
+*.a
+*.lib
+*.pdb
+*.ilk

@@ -1,0 +1,9 @@
+{
+  "C_Cpp.default.compilerPath": "C:/msys64/ucrt64/bin/gcc.exe",
+  "files.associations": {
+    "sdl.h": "c",
+    "sdl_main.h": "c",
+    "stdbool.h": "c",
+    "stdlib.h": "c"
+  }
+}
