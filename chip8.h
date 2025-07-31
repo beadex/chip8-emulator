@@ -25,6 +25,7 @@ typedef struct
     uint32_t fg_color;
     uint32_t bg_color;
     uint32_t scale_factor;
+    bool pixel_outlines; // Draw pixel outlines yes/no
 } emulator_config_t;
 
 /**
@@ -38,21 +39,37 @@ typedef enum
 } emulator_state_t;
 
 /**
+ * CHIP8 Instruction format
+ */
+typedef struct
+{
+    uint16_t opcode;
+    uint16_t NNN; // 12bit address/constant
+    uint8_t NN;   // 8bit constant
+    uint8_t N;    // 4bit constant
+    uint8_t X;    // 4bit register identifier
+    uint8_t Y;    // 4bit register identifier
+} chip8_instruction_t;
+
+/**
  * CHIP8 Machine object
  */
 typedef struct
 {
     emulator_state_t state;
     uint8_t ram[4096];
-    bool display[64 * 32]; // Emulate original CHIP8 resolution pixels
-    uint16_t stack[12];    // Subroutine stack
-    uint8_t V[16];         // Data registers V0-VF
-    uint16_t I;            // Index register
-    uint16_t PC;           // Program Counter
-    uint8_t delay_timer;   // Decrements at 60hz when >0
-    uint8_t sound_timer;   // Decrements at 60hz and plays tone when >0
-    bool keypad[16];       // Hexadecimal keypad 0x0 - 0xF
-    const char *rom_name;  // Currently running ROM
+    bool display[64 * 32];    // Emulate original CHIP8 resolution pixels
+    uint16_t stack[12];       // Subroutine stack
+    uint16_t *stack_ptr;      // Stack pointer
+    uint8_t V[16];            // Data registers V0-VF
+    uint16_t I;               // Index register
+    uint16_t PC;              // Program Counter
+    uint8_t delay_timer;      // Decrements at 60hz when >0
+    uint8_t sound_timer;      // Decrements at 60hz and plays tone when >0
+    bool keypad[16];          // Hexadecimal keypad 0x0 - 0xF
+    const char *rom_name;     // Currently running ROM
+    chip8_instruction_t inst; // CUrrently executing instruction
+    bool draw;                // Update the screen yes/no
 } chip8_t;
 
 /**
@@ -83,7 +100,7 @@ void clear_screen(const emulator_config_t config, const emulator_t emu);
  * Actual render & update the screen
  * \param emulator_t the emulator container
  */
-void update_screen(const emulator_t emu);
+void update_screen(const emulator_t emu, const emulator_config_t config, const chip8_t chip8);
 
 /**
  * The poll events loop that handle various of input events
@@ -98,6 +115,13 @@ void handle_input(chip8_t *chip8);
  * \returns true on success or false on failure; as long as the error message
  */
 bool init_chip8(chip8_t *chip8, const char rom_name[]);
+
+/**
+ * Emulate the CHIP8 instructions
+ * \param chip8_t the CHIP8 machine
+ * \param emulator_config_t current config of emulator container
+ */
+void emulate_instruction(chip8_t *chip8, const emulator_config_t config);
 
 /**
  * Final cleanup to get back memories to system
